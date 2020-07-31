@@ -9,10 +9,6 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.String,
     required: true,
   },
-  logged: {
-    type: mongoose.Schema.Types.Boolean,
-    required: true,
-  },
 });
 
 module.exports = mongoose.model("User", userSchema, "users");

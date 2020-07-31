@@ -28,7 +28,7 @@ exports.signupHandler = (req, res, next) => {
       return user.save();
     })
     .then((result) =>
-      res.staus(201).json({ message: "User created Succesfully" })
+      res.status(201).json({ message: "User created Succesfully" })
     )
     .catch((err) => next(err));
 };
@@ -45,4 +45,19 @@ exports.loginHandler = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
+  bcryptjs
+    .compare(req.body.password, req.userDoc.password)
+    .then((matched) => {
+      if (!matched) {
+        const error = new Error();
+        error.statusCode = 403;
+        error.message = ["Invalid email/password"];
+        throw error;
+      }
+      const token = jwt.sign({ email: req.body.email }, keys.jwtSecret, {
+        expiresIn: "1h",
+      });
+      res.status(200).json({ token: token });
+    })
+    .catch((err) => next(err));
 };

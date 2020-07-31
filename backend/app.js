@@ -2,6 +2,7 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const mongoose = require("mongoose");
 
+const authRoutes = require("./routes/auth");
 const keys = require("./apikeys");
 
 const app = express();
@@ -20,6 +21,19 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.json());
+
+app.use("/auth", authRoutes);
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  if (!err.message) {
+    err.message = ["Internal Server Error"];
+  }
+  if (typeof err.message === String) {
+    err.message = [err.message];
+  }
+  res.status(err.stausCode || 500).json(err);
+});
 
 mongoose
   .connect(keys.mongoURI)
