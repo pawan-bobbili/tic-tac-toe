@@ -50,7 +50,30 @@
   margin-bottom: 8px;
 }
 
-.Recieve div span {
+.Recieve div p {
+  display: inline-block;
   background: yellow;
-  width: 70px;
+  margin-bottom: 8px;
+  margin-top: 8px;
+  width: 450px;
+  text-align: left;
+}
+
+.Agree {
+  color: green;
+  background: white;
+  border: 0;
+  font-weight: bold;
+}
+
+.Reject {
+  color: red;
+  background: white;
+  border: 0;
+  font-weight: bold;
+}
+
+.Agree:hover,
+.Reject:hover {
+  cursor: pointer;
 }

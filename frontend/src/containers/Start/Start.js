@@ -10,10 +10,10 @@ class Start extends React.Component {
       email: "",
       requests: [
         { from: "admin1" },
-        { from: "admin1" },
-        { from: "admin1" },
-        { from: "admin1" },
-        { from: "admin1" },
+        { from: "admin2" },
+        { from: "admin3" },
+        { from: "admin4" },
+        { from: "admin5" },
       ],
     };
     //this.socket = io('http://localhost:8080');
@@ -30,10 +30,12 @@ class Start extends React.Component {
   render() {
     const requests = this.state.requests.map((request) => {
       return (
-        <div>
-          <span>{request.from}</span>
-          <button>Agree</button>
-          <button>Reject</button>
+        <div key={request.from}>
+          <p>
+            <strong>{request.from}</strong> challenged you
+          </p>
+          <button className={styles.Agree}>Agree</button>
+          <button className={styles.Reject}>Reject</button>
         </div>
       );
     });
