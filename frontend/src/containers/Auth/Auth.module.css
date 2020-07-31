@@ -1,0 +1,47 @@
+.Parent {
+  width: 100%;
+  height: 100%;
+  padding-top: 10%;
+  padding-left: 30%;
+  padding-right: 30%;
+  box-sizing: border-box;
+}
+
+.Form {
+  margin: auto;
+  border: 1px solid black;
+  padding: 32px 16px;
+  border-radius: 8px;
+}
+
+.Elements {
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+
+.Input {
+  width: 100%;
+  height: 27px;
+  box-sizing: border-box;
+}
+
+.Toggle {
+  box-sizing: border-box;
+  color: blue;
+}
+
+.Submit {
+  margin-left: 25px;
+  box-sizing: border-box;
+  color: green;
+}
+
+.Toggle:hover,
+.Submit:hover {
+  cursor: pointer;
+}
+
+.Labels {
+  margin-top: 0;
+  margin-bottom: 0px;
+}
