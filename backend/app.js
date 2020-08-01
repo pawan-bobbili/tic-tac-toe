@@ -1,6 +1,7 @@
 const bodyParser = require("body-parser");
 const express = require("express");
 const mongoose = require("mongoose");
+const randomstring = require("randomstring");
 
 const authRoutes = require("./routes/auth");
 const keys = require("./apikeys");
@@ -37,6 +38,7 @@ app.use((err, req, res, next) => {
 });
 
 const users = {};
+const ids = {};
 
 mongoose
   .connect(keys.mongoURI)
@@ -47,13 +49,37 @@ mongoose
     const io = socket.getIo();
     io.on("connection", (socket) => {
       console.log("Client Connected", socket.id);
-      console.log(socket.request._query);
-      users[socket.request._query.email] = socket.id;
+      //console.log(socket.request._query);
+      users[socket.request._query.email] = { id: socket.id, room: null };
+      ids[socket.id] = socket.request._query.email;
+
       socket.on("send-request", (data) => {
+        let roomno = randomstring.generate(10);
+        users[ids[socket.id]].room = roomno;
+        socket.join(roomno);
         console.log(data);
         socket
-          .to(users[data.to])
+          .to(users[data.to].id)
           .emit("recieve-request", { from: "admin1@node.com" });
+      });
+
+      socket.on("request-declined", (data) => {
+        io.sockets.connected[users[data.of].id].leave(users[data.of].room);
+        users[data.of].room = null;
+        socket.to(users[data.of].id).emit("request-declined", {});
+      });
+
+      socket.on("request-accepted", (data) => {
+        socket.join(users[data.of].room);
+        users[ids[socket.id]].room = users[data.of].room;
+        socket.to(users[data.of].id).emit("request-accepted", {});
+        setTimeout(
+          () =>
+            io.in(users[data.of].room).emit("server-message", {
+              message: `Ready for the game ${users[data.of].room}`,
+            }),
+          5000
+        );
       });
     });
   })

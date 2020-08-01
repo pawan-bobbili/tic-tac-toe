@@ -22,6 +22,7 @@ export const signin = (email, password) => {
 const signinSucces = (token, email) => {
   socket = io.connect("http://localhost:8080", { query: { email: email } }); //Same as io("URI");
   socket.connect();
+  //console.log(socket.id);    socket.id is always undefined on client side
   return {
     type: actionTypes.AUTH_SUCCESS,
     payload: { token, socket },
