@@ -1,0 +1,36 @@
+.Game {
+  text-align: center;
+}
+
+.Board {
+  box-sizing: border-box;
+  width: 30%;
+  margin: auto;
+  margin-top: 10%;
+  margin-bottom: 80px;
+}
+
+.Box {
+  display: inline-block;
+  height: 100px;
+  width: 32%;
+  border: 1px solid black;
+  margin: 1px 1px;
+  text-align: center;
+  font-size: 64px;
+}
+
+.Row {
+  margin: auto;
+  text-align: center;
+}
+
+p {
+  display: inline-block;
+  text-align: center;
+  font-size: 22px;
+  font-weight: lighter;
+  padding: 8px 50px;
+  border: 1px solid gray;
+  box-shadow: 2px 2px gray;
+}

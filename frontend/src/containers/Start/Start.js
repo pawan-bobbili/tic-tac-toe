@@ -1,6 +1,5 @@
 import { connect } from "react-redux";
 import React from "react";
-import io from "socket.io-client";
 
 import Modal from "../../components/UI/Modal/Modal";
 import Spinner from "../../components/UI/Spinner/Spinner";
