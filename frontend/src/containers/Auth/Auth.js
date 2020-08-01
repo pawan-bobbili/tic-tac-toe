@@ -45,7 +45,7 @@ class Auth extends React.PureComponent {
 
   render() {
     if (this.props.authenticated) {
-      return <Redirect to="/game" />;
+      return <Redirect to="/start" />;
     }
     return (
       <div className={styles.Parent}>

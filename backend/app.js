@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/auth");
 const keys = require("./apikeys");
+const socket = require("./socket");
 
 const app = express();
 
@@ -35,10 +36,25 @@ app.use((err, req, res, next) => {
   res.status(err.stausCode || 500).json(err);
 });
 
+const users = {};
+
 mongoose
   .connect(keys.mongoURI)
   .then((result) => {
     console.log("Backend Established");
-    app.listen(8080);
+    const server = app.listen(8080);
+    socket.init(server);
+    const io = socket.getIo();
+    io.on("connection", (socket) => {
+      console.log("Client Connected", socket.id);
+      console.log(socket.request._query);
+      users[socket.request._query.email] = socket.id;
+      socket.on("send-request", (data) => {
+        console.log(data);
+        socket
+          .to(users[data.to])
+          .emit("recieve-request", { from: "admin1@node.com" });
+      });
+    });
   })
   .catch((err) => console.log(err));

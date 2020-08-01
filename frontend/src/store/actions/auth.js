@@ -2,6 +2,10 @@ import axios from "axios";
 
 import * as actionTypes from "./actionTypes";
 
+import io from "socket.io-client";
+
+let socket;
+
 export const signin = (email, password) => {
   return (dispatch) => {
     axios
@@ -10,14 +14,24 @@ export const signin = (email, password) => {
         JSON.stringify({ email, password }),
         { headers: { "Content-Type": "application/json" } }
       )
-      .then((response) => dispatch(signinSucces(response.data.token)))
+      .then((response) => dispatch(signinSucces(response.data.token, email)))
       .catch((err) => console.log(err));
   };
 };
 
-const signinSucces = (token) => {
+const signinSucces = (token, email) => {
+  socket = io.connect("http://localhost:8080", { query: { email: email } }); //Same as io("URI");
+  socket.connect();
   return {
     type: actionTypes.AUTH_SUCCESS,
-    payload: token,
+    payload: { token, socket },
+  };
+};
+
+export const signout = () => {
+  socket.disconnect();
+  socket = null;
+  return {
+    type: actionTypes.AUTH_OUT,
   };
 };

@@ -1,3 +1,4 @@
+import { connect } from "react-redux";
 import React from "react";
 import io from "socket.io-client";
 
@@ -8,23 +9,26 @@ class Start extends React.Component {
     super(props);
     this.state = {
       email: "",
-      requests: [
-        { from: "admin1" },
-        { from: "admin2" },
-        { from: "admin3" },
-        { from: "admin4" },
-        { from: "admin5" },
-      ],
+      requests: [{ from: "admin5" }],
     };
-    //this.socket = io('http://localhost:8080');
+    //this.socket = io("http://localhost:8080");
   }
 
   componentDidMount() {
-    //this.socket.connect();
+    this.props.socket.on("recieve-request", (data) => {
+      let arr = [];
+      arr.push({ from: data.from });
+      arr = [...arr, ...this.state.requests];
+      this.setState({ requests: arr });
+    });
   }
 
   inputChangeHandler = (event) => {
     this.setState({ email: event.target.value });
+  };
+
+  sendRequestHandler = () => {
+    this.props.socket.emit("send-request", { to: this.state.email });
   };
 
   render() {
@@ -49,7 +53,7 @@ class Start extends React.Component {
             placeholder="Email Address"
             onChange={this.inputChangeHandler}
           />
-          <button>Send Request</button>
+          <button onClick={this.sendRequestHandler}>Send Request</button>
         </div>
         <div className={styles.Recieve}>{requests}</div>
       </React.Fragment>
@@ -57,4 +61,10 @@ class Start extends React.Component {
   }
 }
 
-export default Start;
+const mapStateToProps = (state) => {
+  return {
+    socket: state.auth.socket,
+  };
+};
+
+export default connect(mapStateToProps)(Start);
