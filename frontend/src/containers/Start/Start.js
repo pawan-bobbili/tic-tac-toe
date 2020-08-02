@@ -1,5 +1,6 @@
 import { connect } from "react-redux";
 import React from "react";
+import { withRouter } from "react-router-dom";
 
 import Modal from "../../components/UI/Modal/Modal";
 import Spinner from "../../components/UI/Spinner/Spinner";
@@ -39,6 +40,10 @@ class Start extends React.Component {
       });
       setTimeout(() => {
         this.setState({ modalContent: null });
+        this.props.history.push({
+          pathname: "/game",
+          search: "?index=0",
+        });
       }, 3000);
     });
 
@@ -56,6 +61,10 @@ class Start extends React.Component {
       }
     });
     this.setState({ requests: [] });
+    this.props.history.push({
+      pathname: "/game",
+      search: "?index=1",
+    });
   };
 
   inputChangeHandler = (event) => {
@@ -133,4 +142,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Start);
+export default connect(mapStateToProps)(withRouter(Start));

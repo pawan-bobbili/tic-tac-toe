@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import Modal from "../../components/UI/Modal/Modal";
 import styles from "./Game.module.css";
@@ -10,29 +10,52 @@ const messages = ["Give Your Response...", "Waiting for response..."];
 class Game extends React.Component {
   constructor(props) {
     super(props);
+    let statusIndex, ele;
+    const queries = new URLSearchParams(this.props.location.search);
+    for (let param of queries.entries()) {
+      if (param[0] === "index") {
+        statusIndex = +param[1];
+        if (+param[1] === 1) {
+          ele = "x";
+        } else {
+          ele = "o";
+        }
+      }
+    }
     this.state = {
       box: ["", "", "", "", "", "", "", "", ""],
-      statusIndex: 0,
+      statusIndex: statusIndex,
       modalContent: null,
-      ele: "x",
+      ele: ele,
     };
   }
 
   componentDidMount() {
-    console.log(useLocation().state);
     this.props.socket.on("apply-move", (data) => {
       const updatedBox = [...this.state.box];
       updatedBox[data.pos] = data.ele;
-      this.setState({ statusIndex: 0, box: updatedBox });
+      this.setState((prevState) => {
+        return { box: updatedBox, statusIndex: !prevState.statusIndex };
+      });
     });
-    this.props.on("Servermessage", (data) => {
+    this.props.socket.on("server-message", (data) => {
       this.setState({ modalContent: data.message });
+    });
+    this.props.socket.on("game-over", (data) => {
+      this.setState({ modalContent: data.message });
+      setTimeout(
+        () => this.props.history.replace({ pathname: "/start" }),
+        2000
+      );
     });
   }
 
   submitRequest = (pos) => {
-    this.props.socket.emit("make-move", { pos: pos });
-    this.setState({ statusIndex: 1 });
+    if (this.state.box[pos] !== "") {
+      this.setState({ modalContent: "Don't be smart enough !" });
+    } else {
+      this.props.socket.emit("make-move", { pos: pos });
+    }
   };
 
   render() {
@@ -91,4 +114,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Game);
+export default connect(mapStateToProps)(withRouter(Game));
