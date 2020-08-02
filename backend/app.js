@@ -93,24 +93,40 @@ mongoose
           return;
         }
         const player = room[room.players[room.next]];
-        if (player.status && 1 << data.pos === 1 << data.pos) {
+        if ((player.status & (1 << data.pos)) === 1 << data.pos) {
           io.to(socket.id).emit("server-message", {
             message: "Already occupied",
           });
           return;
         }
-        player.status = player.status || 1 << data.pos;
+        player.status = player.status | (1 << data.pos);
         io.in(roomno).emit("apply-move", { pos: data.pos, ele: player.ele });
+        let gamedone = false;
         for (let number of winning) {
           if (number && player.status === number) {
-            io.to(socket.id).emit("server-message", {
+            io.to(socket.id).emit("game-over", {
               message: "Won the game !!",
             });
-            io.to(room.players[room.next ^ 1]).emit("server-message", {
+            io.to(room.players[room.next ^ 1]).emit("game-over", {
               message: "Lost the game",
             });
+            gamedone = true;
             break;
           }
+        }
+        if (!gamedone) {
+          if (
+            player.status |
+            (room[room.players[room.next ^ 1]].status === 511)
+          ) {
+            io.in(roomno).emit("game-over", { message: "Game Draw !!" });
+          }
+        }
+        if (gamedone) {
+          for (let socketId of room.players) {
+            io.sockets.connected[socketId].leave(roomno);
+          }
+          delete games[roomno];
         }
         room.next = room.next ^ 1;
       });
