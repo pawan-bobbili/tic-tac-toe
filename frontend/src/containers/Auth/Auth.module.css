@@ -1,17 +1,19 @@
 .Parent {
   width: 100%;
   height: 100%;
-  padding-top: 10%;
-  padding-left: 30%;
-  padding-right: 30%;
+  /*padding-top: 200px;*/
   box-sizing: border-box;
+  border: 1px solid white;
 }
 
 .Form {
+  box-sizing: border-box;
   margin: auto;
-  border: 1px solid black;
+  margin-top: 200px;
+  margin-bottom: 200px;
+  width: 30%;
   padding: 32px 16px;
-  border-radius: 8px;
+  box-shadow: 1px 1px 1px 1px gray;
 }
 
 .Elements {
@@ -28,12 +30,18 @@
 .Toggle {
   box-sizing: border-box;
   color: blue;
+  vertical-align: middle;
 }
 
 .Submit {
   margin-left: 25px;
+  font-size: 18px;
   box-sizing: border-box;
   color: green;
+  vertical-align: middle;
+  font-weight: bold;
+  border: 0;
+  background: white;
 }
 
 .Toggle:hover,

@@ -9,7 +9,7 @@ class Start extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
+      name: "",
       requests: [],
       modalContent: null,
     };
@@ -23,17 +23,19 @@ class Start extends React.Component {
       arr = [...arr, ...this.state.requests];
       this.setState({ requests: arr });
     });
+
     this.props.socket.on("request-declined", () => {
       this.setState({
-        modalContent: `${this.state.email} rejected your request`,
+        modalContent: `${this.state.name} rejected your request`,
       });
       setTimeout(() => {
         this.setState({ modalContent: null });
       }, 3000);
     });
+
     this.props.socket.on("request-accepted", () => {
       this.setState({
-        modalContent: `${this.state.email} accepted your request`,
+        modalContent: `${this.state.name} accepted your request`,
       });
       setTimeout(() => {
         this.setState({ modalContent: null });
@@ -46,31 +48,42 @@ class Start extends React.Component {
     });
   }
 
-  acceptHandler = (email) => {
-    this.props.socket.emit("request-accepted", { of: email });
+  acceptHandler = (name) => {
+    this.props.socket.emit("request-accepted", { of: name });
     this.state.requests.forEach((request) => {
-      if (request.from !== email) {
-        this.props.socket.emit("request-declined", { of: email });
+      if (request.from !== name) {
+        this.props.socket.emit("request-declined", { of: name });
       }
     });
     this.setState({ requests: [] });
   };
 
   inputChangeHandler = (event) => {
-    this.setState({ email: event.target.value });
+    this.setState({ name: event.target.value });
   };
 
-  rejectHandler = (email) => {
-    this.props.socket.emit("request-declined", { of: email });
+  rejectHandler = (name) => {
+    this.props.socket.emit("request-declined", { of: name });
     const newRequests = this.state.requests.filter(
-      (request) => request.from !== email
+      (request) => request.from !== name
     );
     this.setState({ requests: newRequests });
   };
 
   sendRequestHandler = () => {
-    this.props.socket.emit("send-request", { to: this.state.email });
-    this.setState({ modalContent: "Request Send... Waiting For Response" });
+    this.props.socket.emit("send-request", { to: this.state.name });
+    this.setState({
+      modalContent: (
+        <React.Fragment>
+          <Spinner />
+          <p style={{ boxShadow: "0", border: "0" }}>
+            {" "}
+            {/* deliberately putted as these properties were assigned values automatically */}
+            Request Send... Waiting For Response
+          </p>
+        </React.Fragment>
+      ),
+    });
   };
 
   render() {
@@ -97,16 +110,13 @@ class Start extends React.Component {
     });
     return (
       <React.Fragment>
-        <Modal show={this.state.modalContent}>
-          <Spinner />
-          {this.state.modalContent}
-        </Modal>
+        <Modal show={this.state.modalContent}>{this.state.modalContent}</Modal>
         <div className={styles.Send}>
           <input
             type="text"
-            name="email"
-            value={this.state.email}
-            placeholder="Email Address"
+            name="name"
+            value={this.state.name}
+            placeholder="Username"
             onChange={this.inputChangeHandler}
           />
           <button onClick={this.sendRequestHandler}>Send Request</button>

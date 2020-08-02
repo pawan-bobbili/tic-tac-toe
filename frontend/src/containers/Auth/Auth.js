@@ -13,7 +13,8 @@ class Auth extends React.PureComponent {
     this.state = {
       email: "",
       password: "",
-      signup: true,
+      username: "",
+      signup: false,
     };
   }
 
@@ -29,6 +30,7 @@ class Auth extends React.PureComponent {
           JSON.stringify({
             email: this.state.email,
             password: this.state.password,
+            username: this.state.username,
           }),
           {
             headers: {
@@ -50,8 +52,22 @@ class Auth extends React.PureComponent {
     return (
       <div className={styles.Parent}>
         <div className={styles.Form}>
+          {this.state.signup ? (
+            <div className={styles.Elements}>
+              <span>Username</span>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Username"
+                value={this.state.username}
+                onChange={(event) => this.inputHandler(event, "username")}
+                className={styles.Input}
+              />
+            </div>
+          ) : null}
           <div className={styles.Elements}>
-            <p className={styles.Labels}>Email</p>
+            <span>Email</span>
             <input
               type="text"
               id="email"
@@ -63,7 +79,7 @@ class Auth extends React.PureComponent {
             />
           </div>
           <div className={styles.Elements}>
-            <p className={styles.Labels}>Password</p>
+            <span>Password</span>
             <input
               type="password"
               id="password"
@@ -78,7 +94,7 @@ class Auth extends React.PureComponent {
             className={styles.Toggle}
             onClick={() =>
               this.setState((prevState) => {
-                return { signup: !prevState.signup };
+                return { signup: !prevState.signup, username: "" };
               })
             }
           >
@@ -88,7 +104,7 @@ class Auth extends React.PureComponent {
             className={styles.Submit}
             onClick={() => this.submissionHandler()}
           >
-            {this.state.signup ? "SignUp" : "SignIn"}
+            {this.state.signup ? "SIGNUP" : "SIGNIN"}
           </button>
         </div>
       </div>

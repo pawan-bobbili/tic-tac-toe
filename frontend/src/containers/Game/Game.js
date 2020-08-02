@@ -1,39 +1,94 @@
+import { connect } from "react-redux";
 import React from "react";
+import { useLocation } from "react-router-dom";
 
+import Modal from "../../components/UI/Modal/Modal";
 import styles from "./Game.module.css";
+
+const messages = ["Give Your Response...", "Waiting for response..."];
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       box: ["", "", "", "", "", "", "", "", ""],
+      statusIndex: 0,
+      modalContent: null,
+      ele: "x",
     };
   }
+
+  componentDidMount() {
+    console.log(useLocation().state);
+    this.props.socket.on("apply-move", (data) => {
+      const updatedBox = [...this.state.box];
+      updatedBox[data.pos] = data.ele;
+      this.setState({ statusIndex: 0, box: updatedBox });
+    });
+    this.props.on("Servermessage", (data) => {
+      this.setState({ modalContent: data.message });
+    });
+  }
+
+  submitRequest = (pos) => {
+    this.props.socket.emit("make-move", { pos: pos });
+    this.setState({ statusIndex: 1 });
+  };
 
   render() {
     return (
       <div className={styles.Game}>
+        <Modal
+          show={this.state.modalContent}
+          modalclosed={() => this.setState({ modalContent: null })}
+        >
+          {this.state.modalContent}
+        </Modal>
         <div className={styles.Board}>
           <div className={styles.Row}>
-            <div className={styles.Box}>{this.state.box[0]}</div>
-            <div className={styles.Box}>{this.state.box[1]}</div>
-            <div className={styles.Box}>{this.state.box[2]}</div>
+            <div className={styles.Box} onClick={() => this.submitRequest(0)}>
+              {this.state.box[0]}
+            </div>
+            <div className={styles.Box} onClick={() => this.submitRequest(1)}>
+              {this.state.box[1]}
+            </div>
+            <div className={styles.Box} onClick={() => this.submitRequest(2)}>
+              {this.state.box[2]}
+            </div>
           </div>
           <div className={styles.Row}>
-            <div className={styles.Box}>{this.state.box[3]}</div>
-            <div className={styles.Box}>{this.state.box[4]}</div>
-            <div className={styles.Box}>{this.state.box[5]}</div>
+            <div className={styles.Box} onClick={() => this.submitRequest(3)}>
+              {this.state.box[3]}
+            </div>
+            <div className={styles.Box} onClick={() => this.submitRequest(4)}>
+              {this.state.box[4]}
+            </div>
+            <div className={styles.Box} onClick={() => this.submitRequest(5)}>
+              {this.state.box[5]}
+            </div>
           </div>
           <div className={styles.Row}>
-            <div className={styles.Box}>{this.state.box[6]}</div>
-            <div className={styles.Box}>{this.state.box[7]}</div>
-            <div className={styles.Box}>{this.state.box[8]}</div>
+            <div className={styles.Box} onClick={() => this.submitRequest(6)}>
+              {this.state.box[6]}
+            </div>
+            <div className={styles.Box} onClick={() => this.submitRequest(7)}>
+              {this.state.box[7]}
+            </div>
+            <div className={styles.Box} onClick={() => this.submitRequest(8)}>
+              {this.state.box[8]}
+            </div>
           </div>
         </div>
-        <p>Give Your Response...</p>
+        <p className={styles.Status}>{messages[this.state.statusIndex]}</p>
       </div>
     );
   }
 }
 
-export default Game;
+const mapStateToProps = (state) => {
+  return {
+    socket: state.auth.socket,
+  };
+};
+
+export default connect(mapStateToProps)(Game);
