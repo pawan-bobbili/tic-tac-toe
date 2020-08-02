@@ -14,7 +14,7 @@ router.post(
       .withMessage("Please enter a valid email address")
       .bail()
       .custom((value, { req }) => {
-        return User.findOne({ email: value })
+        return User.findOne({ email: value.toString() })
           .then((userDoc) => {
             if (userDoc) {
               return Promise.reject(
@@ -28,6 +28,16 @@ router.post(
     body("password")
       .isLength({ min: 6 })
       .withMessage("Password should be atleast 6 characters long"),
+    body("username").custom((value, { req }) => {
+      return User.findOne({ username: value.toString() })
+        .then((userDoc) => {
+          if (userDoc) {
+            return Promise.reject("Not a unique Username");
+          }
+          return true;
+        })
+        .catch((err) => Promise.reject(err));
+    }),
   ],
   authController.signupHandler
 );

@@ -23,7 +23,7 @@ exports.signupHandler = (req, res, next) => {
       const user = new User({
         email: req.body.email,
         password: hashPwd,
-        logged: false,
+        username: req.body.username,
       });
       return user.save();
     })
@@ -54,10 +54,14 @@ exports.loginHandler = (req, res, next) => {
         error.message = ["Invalid email/password"];
         throw error;
       }
-      const token = jwt.sign({ email: req.body.email }, keys.jwtSecret, {
-        expiresIn: "1h",
-      });
-      res.status(200).json({ token: token });
+      const token = jwt.sign(
+        { email: req.body.email, name: req.userDoc.username },
+        keys.jwtSecret,
+        {
+          expiresIn: "1h",
+        }
+      );
+      res.status(200).json({ token: token, name: req.userDoc.username });
     })
     .catch((err) => next(err));
 };

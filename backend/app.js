@@ -38,7 +38,9 @@ app.use((err, req, res, next) => {
 });
 
 const users = {};
-const ids = {};
+const nameOf = {};
+const games = {};
+const winning = [446, 56, 7, 292, 146, 73, 273, 84];
 
 mongoose
   .connect(keys.mongoURI)
@@ -49,18 +51,17 @@ mongoose
     const io = socket.getIo();
     io.on("connection", (socket) => {
       console.log("Client Connected", socket.id);
-      //console.log(socket.request._query);
-      users[socket.request._query.email] = { id: socket.id, room: null };
-      ids[socket.id] = socket.request._query.email;
+      users[socket.request._query.name] = { id: socket.id, room: null };
+      nameOf[socket.id] = socket.request._query.name;
 
       socket.on("send-request", (data) => {
         let roomno = randomstring.generate(10);
-        users[ids[socket.id]].room = roomno;
+        users[nameOf[socket.id]].room = roomno;
         socket.join(roomno);
         console.log(data);
         socket
           .to(users[data.to].id)
-          .emit("recieve-request", { from: "admin1@node.com" });
+          .emit("recieve-request", { from: nameOf[socket.id] });
       });
 
       socket.on("request-declined", (data) => {
@@ -70,16 +71,48 @@ mongoose
       });
 
       socket.on("request-accepted", (data) => {
-        socket.join(users[data.of].room);
-        users[ids[socket.id]].room = users[data.of].room;
+        const roomno = users[data.of].room;
+        socket.join(roomno);
+        users[nameOf[socket.id]].room = roomno;
         socket.to(users[data.of].id).emit("request-accepted", {});
-        setTimeout(
-          () =>
-            io.in(users[data.of].room).emit("server-message", {
-              message: `Ready for the game ${users[data.of].room}`,
-            }),
-          5000
-        );
+        games[roomno] = {
+          [users[data.of].id]: { status: 0, ele: "x" },
+          [socket.id]: { status: 0, ele: "o" },
+          players: [users[data.of].id, socket.id],
+          next: 0,
+        };
+      });
+      socket.on("make-move", (data) => {
+        const roomno = users[nameOf[socket.id]].room;
+        const room = games[roomno];
+        // Extra Request
+        if (room.players[room.next] !== socket.id) {
+          io.to(socket.id).emit("server-message", {
+            message: "Wait till your turn..",
+          });
+          return;
+        }
+        const player = room[room.players[room.next]];
+        if (player.status && 1 << data.pos === 1 << data.pos) {
+          io.to(socket.id).emit("server-message", {
+            message: "Already occupied",
+          });
+          return;
+        }
+        player.status = player.status || 1 << data.pos;
+        io.in(roomno).emit("apply-move", { pos: data.pos, ele: player.ele });
+        for (let number of winning) {
+          if (number && player.status === number) {
+            io.to(socket.id).emit("server-message", {
+              message: "Won the game !!",
+            });
+            io.to(room.players[room.next ^ 1]).emit("server-message", {
+              message: "Lost the game",
+            });
+            break;
+          }
+        }
+        room.next = room.next ^ 1;
       });
     });
   })
