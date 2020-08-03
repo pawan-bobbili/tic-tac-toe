@@ -13,6 +13,7 @@ class Start extends React.Component {
       name: "",
       requests: [],
       modalContent: null,
+      search: "",
     };
     //this.socket = io("http://localhost:8080");
   }
@@ -67,8 +68,8 @@ class Start extends React.Component {
     });
   };
 
-  inputChangeHandler = (event) => {
-    this.setState({ name: event.target.value });
+  inputChangeHandler = (event, key) => {
+    this.setState({ [key]: event.target.value });
   };
 
   rejectHandler = (name) => {
@@ -85,7 +86,7 @@ class Start extends React.Component {
       modalContent: (
         <React.Fragment>
           <Spinner />
-          <p style={{ boxShadow: "0", border: "0" }}>
+          <p>
             {" "}
             {/* deliberately putted as these properties were assigned values automatically */}
             Request Send... Waiting For Response
@@ -97,8 +98,10 @@ class Start extends React.Component {
 
   render() {
     const requests = this.state.requests.map((request) => {
+      let from = request.from;
+      let display = from.startsWith(this.state.search) ? "block" : "none";
       return (
-        <div key={request.from}>
+        <div key={request.from} style={{ display: display }}>
           <p>
             <strong>{request.from}</strong> challenged you
           </p>
@@ -130,6 +133,14 @@ class Start extends React.Component {
           />
           <button onClick={this.sendRequestHandler}>Send Request</button>
         </div>
+        <input
+          type="text"
+          name="search"
+          value={this.state.search}
+          placeholder="Search"
+          className={styles.Search}
+          onChange={(event) => this.inputChangeHandler(event, "search")}
+        />
         <div className={styles.Recieve}>{requests}</div>
       </React.Fragment>
     );
