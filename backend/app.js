@@ -116,8 +116,8 @@ mongoose
         }
         if (!gamedone) {
           if (
-            player.status |
-            (room[room.players[room.next ^ 1]].status === 511)
+            (player.status | room[room.players[room.next ^ 1]].status) ===
+            511
           ) {
             io.in(roomno).emit("game-over", { message: "Game Draw !!" });
           }
