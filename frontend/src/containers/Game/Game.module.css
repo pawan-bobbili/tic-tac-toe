@@ -36,3 +36,15 @@
   border: 1px solid gray;
   box-shadow: 2px 2px gray;
 }
+
+@media (max-width: 365px) {
+  .Board {
+    margin-top: 25%;
+    width: 80%;
+  }
+
+  .Box {
+    height: 92px;
+    font-size: 64px;
+  }
+}

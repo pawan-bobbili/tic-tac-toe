@@ -77,3 +77,25 @@
 .Reject:hover {
   cursor: pointer;
 }
+
+@media (max-width: 365px) {
+  .Send {
+    margin-top: 30%;
+    margin-left: 2%;
+    margin-right: 2%;
+  }
+
+  .Send input {
+    width: 300px;
+  }
+
+  .Recieve {
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 25%;
+  }
+
+  .Recieve div p {
+    width: 200px;
+  }
+}

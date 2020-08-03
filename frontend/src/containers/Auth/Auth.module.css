@@ -53,3 +53,9 @@
   margin-top: 0;
   margin-bottom: 0px;
 }
+
+@media (max-width: 365px) {
+  .Form {
+    width: 95%;
+  }
+}

@@ -16,9 +16,9 @@ class Game extends React.Component {
       if (param[0] === "index") {
         statusIndex = +param[1];
         if (+param[1] === 1) {
-          ele = "x";
+          ele = "X";
         } else {
-          ele = "o";
+          ele = "O";
         }
       }
     }
