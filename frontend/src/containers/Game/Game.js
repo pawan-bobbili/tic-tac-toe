@@ -35,7 +35,7 @@ class Game extends React.Component {
       const updatedBox = [...this.state.box];
       updatedBox[data.pos] = data.ele;
       this.setState((prevState) => {
-        return { box: updatedBox, statusIndex: !prevState.statusIndex };
+        return { box: updatedBox, statusIndex: prevState.statusIndex ^ 1 };
       });
     });
     this.props.socket.on("server-message", (data) => {

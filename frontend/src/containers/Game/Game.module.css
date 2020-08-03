@@ -1,5 +1,6 @@
 .Game {
   text-align: center;
+  box-sizing: border-box;
 }
 
 .Board {
@@ -11,13 +12,14 @@
 }
 
 .Box {
+  box-sizing: border-box;
   display: inline-block;
+  vertical-align: middle;
   height: 100px;
   width: 32%;
   border: 1px solid black;
   margin: 1px 1px;
-  text-align: center;
-  font-size: 64px;
+  font-size: 70px;
 }
 
 .Row {
