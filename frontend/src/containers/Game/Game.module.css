@@ -1,50 +1,75 @@
 .Game {
-  text-align: center;
-  box-sizing: border-box;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .Board {
-  box-sizing: border-box;
-  width: 30%;
-  margin: auto;
-  margin-top: 10%;
-  margin-bottom: 80px;
-}
-
-.Box {
-  box-sizing: border-box;
-  display: inline-block;
-  vertical-align: middle;
-  height: 100px;
-  width: 32%;
-  border: 1px solid black;
-  margin: 1px 1px;
-  font-size: 70px;
+    box-sizing: border-box;
+    width: 30%;
+    margin: auto;
+    margin-top: 10%;
+    margin-bottom: 80px;
 }
 
 .Row {
-  margin: auto;
-  text-align: center;
+    margin: auto;
+    text-align: center;
+}
+
+.RowSeperator {
+    margin: auto;
+    height: 5px;
+    background: black;
+    border-radius: 8px;
+}
+
+.Box {
+    box-sizing: border-box;
+    font-family: "Lemonada", cursive;
+    display: inline-block;
+    vertical-align: middle;
+    height: 100px;
+    width: 31%;
+    border: 0px solid black;
+    font-size: 60px;
+}
+
+.ColumnSeperator {
+    display: inline-block;
+    width: 1%;
+    height: 100px;
+    margin: 0;
+    vertical-align: middle;
+    background: black;
+    border-radius: 2px;
+}
+
+.Red {
+    color: red;
+}
+
+.Blue {
+    color: blue;
 }
 
 .Status {
-  display: inline-block;
-  text-align: center;
-  font-size: 22px;
-  font-weight: lighter;
-  padding: 8px 50px;
-  border: 1px solid gray;
-  box-shadow: 2px 2px gray;
+    display: inline-block;
+    text-align: center;
+    font-size: 22px;
+    font-weight: lighter;
+    padding: 8px 50px;
+    border: 1px solid gray;
+    box-shadow: 2px 2px gray;
 }
 
-@media (max-width: 365px) {
-  .Board {
-    margin-top: 25%;
-    width: 80%;
-  }
+@media (max-width: 400px) {
+    .Board {
+        margin-top: 25%;
+        width: 80%;
+    }
 
-  .Box {
-    height: 92px;
-    font-size: 64px;
-  }
+    .Box {
+        height: 92px;
+        font-size: 64px;
+    }
 }
