@@ -40,7 +40,7 @@ app.use((err, req, res, next) => {
 const users = {};
 const nameOf = {};
 const games = {};
-const winning = [446, 56, 7, 292, 146, 73, 273, 84];
+const winning = [448, 56, 7, 292, 146, 73, 273, 84];
 
 mongoose
   .connect(keys.mongoURI)
@@ -56,6 +56,21 @@ mongoose
 
       socket.on("send-request", (data) => {
         let roomno = randomstring.generate(10);
+        if (!users[data.to]) {
+          return socket.emit("server-message", {
+            message: "Player is offline now!!",
+          });
+        }
+        if (users[data.to].room) {
+          return socket.emit("server-message", {
+            message: "Player is on another game.",
+          });
+        }
+        if (users[data.to].id === socket.id) {
+          return socket.emit("server-message", {
+            message: "It is a dual-player game buddyy!!",
+          });
+        }
         users[nameOf[socket.id]].room = roomno;
         socket.join(roomno);
         console.log(data);
@@ -76,8 +91,8 @@ mongoose
         users[nameOf[socket.id]].room = roomno;
         socket.to(users[data.of].id).emit("request-accepted", {});
         games[roomno] = {
-          [users[data.of].id]: { status: 0, ele: "x" },
-          [socket.id]: { status: 0, ele: "o" },
+          [users[data.of].id]: { status: 0, ele: "X" },
+          [socket.id]: { status: 0, ele: "O" },
           players: [users[data.of].id, socket.id],
           next: 0,
         };
@@ -103,7 +118,7 @@ mongoose
         io.in(roomno).emit("apply-move", { pos: data.pos, ele: player.ele });
         let gamedone = false;
         for (let number of winning) {
-          if (number && player.status === number) {
+          if ((number & player.status) === number) {
             io.to(socket.id).emit("game-over", {
               message: "Won the game !!",
             });
@@ -125,11 +140,15 @@ mongoose
         if (gamedone) {
           for (let socketId of room.players) {
             io.sockets.connected[socketId].leave(roomno);
+            users[nameOf[socketId]].room = null;
           }
           delete games[roomno];
         }
         room.next = room.next ^ 1;
       });
+    });
+    io.on("disconnect", (socket) => {
+      console.log("Client disconnected ", socket.id);
     });
   })
   .catch((err) => console.log(err));

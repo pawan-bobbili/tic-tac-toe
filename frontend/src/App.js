@@ -1,6 +1,7 @@
 import React from "react";
 
 import Auth from "./containers/Auth/Auth";
+import * as actions from "./store/actions";
 import Game from "./containers/Game/Game";
 import Layout from "./containers/Layout/Layout";
 import { Route } from "react-router-dom";

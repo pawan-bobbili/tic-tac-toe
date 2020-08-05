@@ -87,7 +87,7 @@ class Game extends React.Component {
                         <div
                             className={[
                                 styles.Box,
-                                this.state.box[0] === "O"
+                                this.state.box[1] === "O"
                                     ? styles.Blue
                                     : styles.Red,
                             ].join(" ")}
@@ -99,7 +99,7 @@ class Game extends React.Component {
                         <div
                             className={[
                                 styles.Box,
-                                this.state.box[0] === "O"
+                                this.state.box[2] === "O"
                                     ? styles.Blue
                                     : styles.Red,
                             ].join(" ")}
@@ -113,7 +113,7 @@ class Game extends React.Component {
                         <div
                             className={[
                                 styles.Box,
-                                this.state.box[0] === "O"
+                                this.state.box[3] === "O"
                                     ? styles.Blue
                                     : styles.Red,
                             ].join(" ")}
@@ -125,7 +125,7 @@ class Game extends React.Component {
                         <div
                             className={[
                                 styles.Box,
-                                this.state.box[0] === "O"
+                                this.state.box[4] === "O"
                                     ? styles.Blue
                                     : styles.Red,
                             ].join(" ")}
@@ -137,7 +137,7 @@ class Game extends React.Component {
                         <div
                             className={[
                                 styles.Box,
-                                this.state.box[0] === "O"
+                                this.state.box[5] === "O"
                                     ? styles.Blue
                                     : styles.Red,
                             ].join(" ")}
@@ -151,7 +151,7 @@ class Game extends React.Component {
                         <div
                             className={[
                                 styles.Box,
-                                this.state.box[0] === "O"
+                                this.state.box[6] === "O"
                                     ? styles.Blue
                                     : styles.Red,
                             ].join(" ")}
@@ -163,7 +163,7 @@ class Game extends React.Component {
                         <div
                             className={[
                                 styles.Box,
-                                this.state.box[0] === "O"
+                                this.state.box[7] === "O"
                                     ? styles.Blue
                                     : styles.Red,
                             ].join(" ")}
@@ -175,7 +175,7 @@ class Game extends React.Component {
                         <div
                             className={[
                                 styles.Box,
-                                this.state.box[0] === "O"
+                                this.state.box[8] === "O"
                                     ? styles.Blue
                                     : styles.Red,
                             ].join(" ")}
