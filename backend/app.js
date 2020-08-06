@@ -42,6 +42,20 @@ const nameOf = {};
 const games = {};
 const winning = [448, 56, 7, 292, 146, 73, 273, 84];
 
+const Reset_Logout = (io, id) => {
+  if (users[nameOf[id]].timeout) {
+    clearTimeout(users[nameOf[id]].timeout);
+  }
+  users[nameOf[id]].timeout = setTimeout(() => {
+    // Disconnects Automatically
+    console.log("Disconnecting...");
+    io.sockets.connected[id].emit("logout", {
+      message: "You are logged out because of high time of inactivity",
+    });
+    io.sockets.connected[id].disconnect(true);
+  }, 1 * 10 * 1000);
+};
+
 mongoose
   .connect(keys.mongoURI)
   .then((result) => {
@@ -51,11 +65,23 @@ mongoose
     const io = socket.getIo();
     io.on("connection", (socket) => {
       console.log("Client Connected", socket.id);
-      users[socket.request._query.name] = { id: socket.id, room: null };
+      users[socket.request._query.name] = {
+        id: socket.id,
+        room: null,
+        timeout: null,
+      };
       nameOf[socket.id] = socket.request._query.name;
+      Reset_Logout(io, socket.id);
+
+      socket.on("disconnect", () => {
+        console.log("Client disconnected ", socket.id);
+        delete users[nameOf[socket.id]];
+      });
 
       socket.on("send-request", (data) => {
+        Reset_Logout(io, socket.id);
         let roomno = randomstring.generate(10);
+        console.log(socket.id);
         if (!users[data.to]) {
           return socket.emit("server-message", {
             message: "Player is offline now!!",
@@ -80,12 +106,14 @@ mongoose
       });
 
       socket.on("request-declined", (data) => {
-        io.sockets.connected[users[data.of].id].leave(users[data.of].room);
+        Reset_Logout(io, socket.id);
+        io.sockets.connected[users[data.of].id].leave(users[data.of].room); // Accessing sockets with their IDs
         users[data.of].room = null;
         socket.to(users[data.of].id).emit("request-declined", {});
       });
 
       socket.on("request-accepted", (data) => {
+        Reset_Logout(io, socket.id);
         const roomno = users[data.of].room;
         socket.join(roomno);
         users[nameOf[socket.id]].room = roomno;
@@ -98,6 +126,7 @@ mongoose
         };
       });
       socket.on("make-move", (data) => {
+        Reset_Logout(io, socket.id);
         const roomno = users[nameOf[socket.id]].room;
         const room = games[roomno];
         // Extra Request
@@ -146,9 +175,6 @@ mongoose
         }
         room.next = room.next ^ 1;
       });
-    });
-    io.on("disconnect", (socket) => {
-      console.log("Client disconnected ", socket.id);
     });
   })
   .catch((err) => console.log(err));

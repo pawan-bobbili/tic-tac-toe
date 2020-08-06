@@ -41,8 +41,6 @@ const signinSucces = (token, name, socket) => {
 };
 
 export const signout = () => {
-    socket.disconnect();
-    socket = null;
     return {
         type: actionTypes.AUTH_OUT,
     };

@@ -2,6 +2,7 @@ import { connect } from "react-redux";
 import React from "react";
 import { withRouter } from "react-router-dom";
 
+import * as actions from "../../store/actions";
 import Modal from "../../components/UI/Modal/Modal";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import styles from "./Start.module.css";
@@ -50,7 +51,21 @@ class Start extends React.Component {
 
         this.props.socket.on("server-message", (data) => {
             this.setState({ modalContent: data.message });
-            setTimeout(() => this.setState({ modalContent: null }), 3000);
+            setTimeout(() => {
+                if (data.redirect) {
+                    this.props.history.replace(data.redirect);
+                } else {
+                    this.setState({ modalContent: null });
+                }
+            }, 3000);
+        });
+
+        this.props.socket.on("logout", (data) => {
+            this.setState({ modalContent: data.message });
+            setTimeout(() => {
+                this.props.history.replace("/");
+                this.props.signout();
+            }, 3000);
         });
     }
 
@@ -161,4 +176,10 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(withRouter(Start));
+const mapDispatchToProps = (dispatch) => {
+    return {
+        signout: () => dispatch(actions.signout()),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Start));
