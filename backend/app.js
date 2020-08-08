@@ -43,17 +43,18 @@ const games = {};
 const winning = [448, 56, 7, 292, 146, 73, 273, 84];
 
 const Reset_Logout = (io, id) => {
-  if (users[nameOf[id]].timeout) {
-    clearTimeout(users[nameOf[id]].timeout);
+  const user = users[nameOf[id]];
+  if (user.timeout) {
+    clearTimeout(user.timeout);
   }
-  users[nameOf[id]].timeout = setTimeout(() => {
+  user.timeout = setTimeout(() => {
     // Disconnects Automatically
     console.log("Disconnecting...");
     io.sockets.connected[id].emit("logout", {
       message: "You are logged out because of high time of inactivity",
     });
     io.sockets.connected[id].disconnect(true);
-  }, 1 * 10 * 1000);
+  }, 3 * 60 * 1000);
 };
 
 mongoose
@@ -74,8 +75,18 @@ mongoose
       Reset_Logout(io, socket.id);
 
       socket.on("disconnect", () => {
+        const roomno = users[nameOf[socket.id]].room;
+        if (roomno && games[roomno]) {
+          // Both should be checked as room is alloted to the sender at sending time only.
+          socket.to(roomno).emit("game-over", { message: "Won the Game" }); // This syntax will send to every client in room except sender
+          io.sockets.connected[games[roomno].players[0]].leave(roomno);
+          io.sockets.connected[games[roomno].players[1]].leave(roomno);
+          delete games[roomno];
+        }
+        clearTimeout(users[nameOf[socket.id]].timeout); // Clear the timeout , if user deliberately signs out
         console.log("Client disconnected ", socket.id);
         delete users[nameOf[socket.id]];
+        delete nameOf[socket.id];
       });
 
       socket.on("send-request", (data) => {

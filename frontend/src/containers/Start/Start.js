@@ -12,7 +12,7 @@ class Start extends React.Component {
         super(props);
         this.state = {
             name: "",
-            requests: [],
+            //requests: [],
             modalContent: null,
             search: "",
         };
@@ -21,10 +21,11 @@ class Start extends React.Component {
 
     componentDidMount() {
         this.props.socket.on("recieve-request", (data) => {
-            let arr = [];
-            arr.push({ from: data.from });
-            arr = [...arr, ...this.state.requests];
-            this.setState({ requests: arr });
+            this.props.add({ from: data.from });
+            // let arr = [];
+            // arr.push({ from: data.from });
+            // arr = [...arr, ...this.state.requests];
+            // this.setState({ requests: arr });
         });
 
         this.props.socket.on("request-declined", () => {
@@ -71,12 +72,12 @@ class Start extends React.Component {
 
     acceptHandler = (name) => {
         this.props.socket.emit("request-accepted", { of: name });
-        this.state.requests.forEach((request) => {
+        this.props.requests.forEach((request) => {
             if (request.from !== name) {
                 this.props.socket.emit("request-declined", { of: name });
             }
         });
-        this.setState({ requests: [] });
+        this.props.clear();
         this.props.history.push({
             pathname: "/game",
             search: "?index=1",
@@ -89,10 +90,11 @@ class Start extends React.Component {
 
     rejectHandler = (name) => {
         this.props.socket.emit("request-declined", { of: name });
-        const newRequests = this.state.requests.filter(
-            (request) => request.from !== name
-        );
-        this.setState({ requests: newRequests });
+        this.props.remove({ name: name });
+        // const newRequests = this.state.requests.filter(
+        //     (request) => request.from !== name
+        // );
+        // this.setState({ requests: newRequests });
     };
 
     sendRequestHandler = () => {
@@ -112,7 +114,7 @@ class Start extends React.Component {
     };
 
     render() {
-        const requests = this.state.requests.map((request) => {
+        const requests = this.props.requests.map((request) => {
             let from = request.from;
             let display = from.startsWith(this.state.search) ? "block" : "none";
             return (
@@ -173,12 +175,16 @@ class Start extends React.Component {
 const mapStateToProps = (state) => {
     return {
         socket: state.auth.socket,
+        requests: state.requests.requests,
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
         signout: () => dispatch(actions.signout()),
+        add: (data) => dispatch(actions.addRequest(data)),
+        remove: (data) => dispatch(actions.removeRequest(data)),
+        clear: () => dispatch(actions.clearRequests()),
     };
 };
 
