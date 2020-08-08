@@ -1,13 +1,52 @@
 .Toolbar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 7%;
-  width: 100%;
-  text-align: center;
-  padding: 5px;
-  font-weight: bold;
-  font-size: 32px;
-  color: white;
-  background: purple;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 7%;
+    padding: 0px 15px 0 15px;
+    background: purple;
+    display: flex;
+    justify-content: space-between;
+}
+
+.Title {
+    box-sizing: border-box;
+    font-weight: bold;
+    text-align: center;
+    font-size: 32px;
+    color: white;
+    font-family: "Lemonada", cursive;
+}
+
+.Nav {
+    display: flex;
+    justify-content: center;
+}
+
+.Nav div {
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 22px;
+    color: white;
+    padding-top: 8px;
+    margin-left: 22px;
+    font-weight: bold;
+}
+
+.About {
+    box-sizing: border-box;
+    padding: 6px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 22px;
+    color: white;
+}
+
+.About:hover,
+.Nav div:hover {
+    cursor: pointer;
+    color: aquamarine;
+    background-color: rgba(245, 245, 220, 0.3);
+    border-bottom: 3px solid aqua;
 }
