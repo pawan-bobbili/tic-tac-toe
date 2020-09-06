@@ -111,7 +111,7 @@ mongoose
         users[nameOf[socket.id]].room = roomno;
         socket.join(roomno);
         console.log(data);
-        socket
+        socket // To Send Request To another client using their socketID
           .to(users[data.to].id)
           .emit("recieve-request", { from: nameOf[socket.id] });
       });
