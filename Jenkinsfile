@@ -7,7 +7,7 @@ pipeline{
       booleanParam(name: 'DEPLOY', defaultValue: true, description: 'Deploy Application')
     }
     environment {
-        GITHUB_USERNAME = "pawan-bobbili"
+        GITHUB_CREDS = 'pawan-github'
         GITHUB_REPO = "Tic-Tac-Toe__NodeJs-ReactJs-Socket.io-"
     }
     stages{

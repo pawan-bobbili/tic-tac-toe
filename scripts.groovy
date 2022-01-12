@@ -1,17 +1,20 @@
 def cloneRepo() {
-  echo "========Cloning Github Repo========"
+  echo "========Checking Out Github Repo========"
   sh ("if [ -d \"${GITHUB_REPO}\" ]; then rm -Rf ${GITHUB_REPO}; fi")
-  git branch: 'master',
-      credentialsId: 'github-password',
-      url: "https://github.com/${GITHUB_USERNAME}/${GITHUB_REPO}.git"
+  withCredentials([usernamePassword(credentialsId: "${GITHUB_CREDS}", usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
+    sh("echo \"${GITHUB_PASSWORD}\" | git clone -b ${BRANCH.substring(7)} --single-branch  https://${GITHUB_USERNAME}@github.com/${GITHUB_USERNAME}/${GITHUB_REPO}.git")
+  }
+  // git branch: "${BRANCH}",
+  //     credentialsId: 'pawan-github',
+  //     url: "https://github.com/${GITHUB_USERNAME}/${GITHUB_REPO}.git"
 }
 
 def buildFrontend() {
-  sh("docker build -t pawan7/tic-tac-toe:frontend-1.0 ${WORKSPACE}/frontend")
+  sh("docker build -t pawan7/tic-tac-toe:frontend-1.0 ${WORKSPACE}/${GITHUB_REPO}/frontend")
 }
 
 def buildBackend() {
-  sh("docker build -t pawan7/tic-tac-toe:backend-1.0 ${WORKSPACE}/backend")
+  sh("docker build -t pawan7/tic-tac-toe:backend-1.0 ${WORKSPACE}/${GITHUB_REPO}/backend")
 }
 
 def publishImages() {
