@@ -1,6 +1,11 @@
 def gv
 pipeline{
     agent any
+    parameters {
+      booleanParam(name: 'BUILD_BACKEND', defaultValue: true, description: 'Building Backend')
+      booleanParam(name: 'BUILD_FRONTEND', defaultValue: true, description: 'Building Frontend')
+      booleanParam(name: 'DEPLOY', defaultValue: true, description: 'Deploy Application')
+    }
     environment {
         GITHUB_USERNAME = "pawan-bobbili"
         GITHUB_REPO = "Tic-Tac-Toe__NodeJs-ReactJs-Socket.io-"
@@ -20,22 +25,67 @@ pipeline{
                 }
             }
             post{
-                always{
-                    echo "========always========"
-                }
                 success{
-                    echo "========A executed successfully========"
+                    echo "======== Cloned Repoed successfully ========"
                 }
                 failure{
-                    echo "========A execution failed========"
+                    echo "======== Cloning Repos failed ========"
                 }
             }
         }
+        stage("Dockerzing & Publishing Frontend"){
+          steps {
+            script {
+              if (params.BUILD_FRONTEND) {
+                gv.buildFrontend()
+              }
+            }
+          }
+          post{
+            success{
+                echo "======== Dockerized & Published Frontend successfully ========"
+            }
+            failure{
+                echo "======== Dockerzing & Publishing Frontend failed ========"
+            }
+          }
+        }
+        stage("Dockerizing & Publishing Backend"){
+          steps {
+            script {
+              if (params.BUILD_BACKEND) { 
+                gv.buildBackend()
+              }
+            }
+          }
+          post{
+            success{
+                echo "======== Dockerized & Published Backend successfully ========"
+            }
+            failure{
+                echo "======== Dockerzing & Publishing Backend failed ========"
+            }
+          }
+        }
+        stage("Deploying Apllication"){
+          steps {
+            script {
+              if (params.DEPLOY) {
+                gv.deployApp()
+              }
+            }
+          }
+          post{
+            success{
+                echo "======== Deployed Application successfully ========"
+            }
+            failure{
+                echo "======== Deploying Application failed ========"
+            }
+          }
+        }
     }
     post{
-        always{
-            echo "========always========"
-        }
         success{
             echo "========pipeline executed successfully ========"
         }
