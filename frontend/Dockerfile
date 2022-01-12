@@ -2,6 +2,7 @@ FROM node:16-alpine as builder
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 COPY . /usr/src/app/
+ENV REACT_APP_ENDPOINT=http://localhost:9000
 RUN npm install && npm run build
 
 FROM node:16-alpine
