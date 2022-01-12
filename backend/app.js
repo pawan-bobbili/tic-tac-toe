@@ -4,9 +4,8 @@ const mongoose = require("mongoose");
 const randomstring = require("randomstring");
 
 const authRoutes = require("./routes/auth");
-const keys = require("./apikeys");
 const socket = require("./socket");
-
+require("dotenv").config();
 const app = express();
 
 app.use((req, res, next) => {
@@ -58,10 +57,10 @@ const Reset_Logout = (io, id) => {
 };
 
 mongoose
-  .connect(keys.mongoURI)
+  .connect(process.env.MONGO_URI)
   .then((result) => {
     console.log("Backend Established");
-    const server = app.listen(8080);
+    const server = app.listen(process.env.PORT);
     socket.init(server);
     const io = socket.getIo();
     io.on("connection", (socket) => {

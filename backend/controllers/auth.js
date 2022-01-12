@@ -2,7 +2,6 @@ const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 
-const keys = require("../apikeys");
 const User = require("../model/user");
 
 exports.signupHandler = (req, res, next) => {
@@ -18,7 +17,7 @@ exports.signupHandler = (req, res, next) => {
     throw error;
   }
   return bcryptjs
-    .hash(req.body.password, keys.bcryptjsSecret)
+    .hash(req.body.password, parseInt(process.env.BCRYPTJS_SECRET, 10))
     .then((hashPwd) => {
       const user = new User({
         email: req.body.email,
@@ -56,7 +55,7 @@ exports.loginHandler = (req, res, next) => {
       }
       const token = jwt.sign(
         { email: req.body.email, name: req.userDoc.username },
-        keys.jwtSecret,
+        process.env.JWT_SECRET,
         {
           expiresIn: "1h",
         }
