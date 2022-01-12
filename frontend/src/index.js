@@ -14,17 +14,17 @@ import { authReducer, requestReducer } from "./store/reducers";
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
-    combineReducers({ auth: authReducer, requests: requestReducer }),
-    composeEnhancers(applyMiddleware(thunk))
+  combineReducers({ auth: authReducer, requests: requestReducer }),
+  composeEnhancers(applyMiddleware(thunk))
 );
 
 ReactDOM.render(
-    <Provider store={store}>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
-    </Provider>,
-    document.getElementById("root")
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
